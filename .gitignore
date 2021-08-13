@@ -3,5 +3,6 @@
 lib/
 scripts/
 .idea/
+__pycache__/
 
 pyvenv.cfg

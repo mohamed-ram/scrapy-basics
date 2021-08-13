@@ -1,21 +1,15 @@
 import scrapy
 
-class CigabuySpider(scrapy.Spider):
-    name = "cigabuy"
+class CigabuySearchSpider(scrapy.Spider):
+    name = "cigabuy_search"
     
-    # start_urls = [
-    #     "https://www.cigabuy.com/products_all.html"
-    # ]
-
-    def start_requests(self):
-        urls = [
-            "https://www.cigabuy.com/products_all.html"
+    def __init__(self, keyword=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.start_urls = [
+            F"https://www.cigabuy.com/index.php?main_page=ws_search_result&keyword={keyword}&categories_id=&cat_change=true"
         ]
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
     
     def parse(self, response, **kwargs):
-        self.logger.info(f"Response from {response.url} just arrived..")
         for product in response.xpath("//div[@class='p_box_wrapper']"):
             title = product.xpath(".//a[@class='p_box_title']/text()").get()
             url = product.xpath(".//a[@class='p_box_title']/@href").get()
@@ -33,8 +27,3 @@ class CigabuySpider(scrapy.Spider):
                 "sale price": price_after,
                 "url": url
             }
-            
-            # next_page = response.xpath("(//div[@class='digg'])[1]//a[@class='nextPage']/@href").get()
-            # if next_page:
-            #     yield scrapy.Request(url=next_page, callback=self.parse)
-
